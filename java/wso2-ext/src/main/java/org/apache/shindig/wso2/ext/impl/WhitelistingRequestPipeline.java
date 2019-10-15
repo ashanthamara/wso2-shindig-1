@@ -63,7 +63,7 @@ public class WhitelistingRequestPipeline extends DefaultRequestPipeline {
     @Override
     public HttpResponse execute(HttpRequest request) throws GadgetException {
 
-        if (whitelist != null) {
+        if (whitelist != null && whitelist.isEnabled()) {
             if (!whitelist.isWhitelisted(request)) {
                 return HttpResponse.notFound();
             }

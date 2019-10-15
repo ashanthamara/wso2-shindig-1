@@ -32,4 +32,12 @@ public interface Whitelist {
      * @return True or False.
      */
     boolean isWhitelisted(HttpRequest request);
+
+    /**
+     * Method to check if the URL whitelisting proxy is enabled or not.
+     * Proxy can be enable by changing the property wso2.shindig.proxy.enabled to true, in shindig.properties file.
+     *
+     * @return True if enabled, false otherwise.
+     */
+    boolean isEnabled();
 }
