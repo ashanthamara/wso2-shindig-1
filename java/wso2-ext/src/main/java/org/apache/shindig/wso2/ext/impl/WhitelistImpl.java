@@ -38,8 +38,10 @@ import java.util.regex.Pattern;
 public class WhitelistImpl implements Whitelist {
 
     private static final Logger log = Logger.getLogger(WhitelistImpl.class.getName());
+    private final String URI_PORT_REGEX = "^.*:[0-9]{4}.*$";
     private List<Pattern> whiteListedURIPatternList = new ArrayList<Pattern>();
-    private Pattern defaultWhiteListedURIPattern;
+    private final Pattern defaultWhiteListedURIPattern;
+    private boolean isEnabled = false;
 
     public WhitelistImpl() {
 
@@ -51,6 +53,7 @@ public class WhitelistImpl implements Whitelist {
         log.info("URL: " + url + " compiled as the default whitelisted backend URI.");
     }
 
+    @Override
     public boolean isWhitelisted(HttpRequest request) {
 
         boolean isWhitelisted = false;
@@ -71,6 +74,12 @@ public class WhitelistImpl implements Whitelist {
                     request.getUri().toString() + " detected in shindig web app request parameters.");
         }
         return isWhitelisted;
+    }
+
+    @Override
+    public boolean isEnabled() {
+
+        return isEnabled;
     }
 
     /**
@@ -99,6 +108,12 @@ public class WhitelistImpl implements Whitelist {
         }
     }
 
+    @Inject(optional = true)
+    public void setProxyEnabledState(@Named("wso2.shindig.proxy.enabled") boolean isEnabled) {
+
+        this.isEnabled = isEnabled;
+    }
+
     /**
      * Add suitable regex patterns of the provided URI to the whitelist URI regex list.
      *
@@ -107,7 +122,7 @@ public class WhitelistImpl implements Whitelist {
     private String getURIRegex(String uri) {
 
         String regex;
-        if (uri.matches("^.*:[0-9]{4}.*$")) {
+        if (uri.matches(URI_PORT_REGEX)) {
             regex = uri.replaceAll("/", "\\/");
         } else {
             String[] uriComponents = uri.split("/");
